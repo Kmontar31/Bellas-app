@@ -11,4 +11,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    resolve: {
+        alias: {
+            '@fullcalendar': '/node_modules/@fullcalendar'
+        }
+    }
 });

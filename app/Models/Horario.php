@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Horario extends Model
+{
+    use HasFactory;
+
+    protected $table = 'horarios';
+
+    protected $fillable = [
+        'profesional_id',
+        'dia_semana',
+        'hora_inicio',
+        'hora_fin'
+    ];
+
+    protected $casts = [
+        'hora_inicio' => 'datetime',
+        'hora_fin' => 'datetime',
+    ];
+
+    /**
+     * Obtener el profesional al que pertenece este horario
+     */
+    public function profesional()
+    {
+        return $this->belongsTo(Profesional::class, 'profesional_id');
+    }
+}

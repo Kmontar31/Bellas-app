@@ -18,6 +18,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
  
    <!--iconos de boortsap-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  
+  @stack('styles')
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -42,10 +44,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a href="{{url('/admin/clientes')}}" class="nav-link">Clientes</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/horario')}}" class="nav-link">Horario</a>
+        <a href="{{url('/admin/horarios')}}" class="nav-link">Disponibilidad</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/agenda')}}" class="nav-link">Agenda</a>
+        <a href="{{url('/admin/agenda/calendar')}}" class="nav-link">Agenda</a>
       </li>
     </ul>
 
@@ -210,5 +212,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{url('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{url('dist/js/adminlte.min.js')}}"></script>
+@stack('scripts')
 </body>
 </html>
