@@ -27,7 +27,12 @@ class ClientesController extends Controller
             'direccion' => 'nullable|string'
         ]);
 
-        Cliente::create($request->all());
+        Cliente::create([
+            'nombre' => $request->nombre,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+            'direccion' => $request->direccion
+        ]);
         return redirect()->route('admin.clientes.index')
             ->with('success', 'Cliente creado exitosamente.');
     }
