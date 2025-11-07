@@ -5,13 +5,15 @@
         <h1>Servicios</h1>
         <a href="{{ route('admin.servicios.create') }}" class="btn btn-primary mb-3">Nuevo Servicio</a>
         <div class="table-responsive">
+            <a href="{{'admin/servicios/create'}}" class="btn btn primary">
+                </a>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Descripción</th>
                         <th>Duración (min)</th>
                         <th>Precio</th>
+                        <th>Categoria</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
@@ -19,9 +21,9 @@
                     @forelse($servicios as $servicio)
                         <tr>
                             <td>{{ $servicio->nombre }}</td>
-                            <td>{{ $servicio->descripcion ?? '-' }}</td>
                             <td>{{ $servicio->duracion_minutos ?? '-' }}</td>
                             <td>{{ isset($servicio->precio) ? number_format($servicio->precio, 2) : '-' }}</td>
+                            <td>{{ $servicio->categoria ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('admin.servicios.edit', $servicio->id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
                                 <form action="{{ route('admin.servicios.destroy', $servicio->id) }}" method="POST" style="display:inline-block;">

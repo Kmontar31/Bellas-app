@@ -21,13 +21,18 @@ class ServiciosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
+            'nombre' => 'required|string|max:191',
             'duracion_minutos' => 'required|integer|min:1',
-            'precio' => 'required|numeric|min:0'
+            'precio' => 'required|numeric|min:0',
+            'categoria' => 'required|string|max:20'
         ]);
 
-        Servicio::create($request->all());
+        Servicio::create([
+            'nombre' => $request->nombre,
+            'duracion_minutos' => $request->duracion_minutos,
+            'precio' => $request->precio,
+            'categoria' => $request->categoria
+        ]);
         return redirect()->route('admin.servicios.index')
             ->with('success', 'Servicio creado exitosamente.');
     }
@@ -46,9 +51,9 @@ class ServiciosController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
             'duracion_minutos' => 'required|integer|min:1',
-            'precio' => 'required|numeric|min:0'
+            'precio' => 'required|numeric|min:0',
+            'categoria' => 'required|string|max:255'
         ]);
 
         $servicio->update($request->all());

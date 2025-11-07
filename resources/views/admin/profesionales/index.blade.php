@@ -5,6 +5,8 @@
         <h1>Profesionales</h1>
         <a href="{{ route('admin.profesionales.create') }}" class="btn btn-primary mb-3">Nuevo Profesional</a>
         <div class="table-responsive">
+            <a href="{{'admin/profesionales/create'}}" class="btn btn primary">
+                </a>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
