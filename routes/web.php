@@ -12,7 +12,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\Controller;
 
 Route::get('/', function () {
-    return view('home');
+    return view('index');
 });
 
 // Rutas de debug temporales para comprobar vistas sin pasar por Auth/BD
