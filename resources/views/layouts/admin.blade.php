@@ -79,24 +79,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a href="#" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
+                Inicio
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+             <a href="http://127.0.0.1:8000/admin/servicios" class="nav-link active">
+              <i class="nev-icon fas bi bi-person-fill"></i>
+              <p>
+                Servicio 
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+             <a href="http://127.0.0.1:8000/admin/profesionales" class="nav-link active">
+              <i class="nev-icon fas bi bi-person-fill"></i>
+              <p>
+                Profesioanles
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+             <a href="http://127.0.0.1:8000/admin/clientes" class="nav-link active">
+              <i class="nev-icon fas bi bi-person-fill"></i>
+              <p>
                 Clientes 
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" class="nav-link active">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Active Page</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link active ">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Inactive Page</p>
-                </a>
-              </li>
-            </ul>
+             <a href="http://127.0.0.1:8000/admin/horarios" class="nav-link active">
+              <i class="nev-icon fas bi bi-person-fill"></i>
+              <p>
+                Disponibilidad
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+               <a href="http://127.0.0.1:8000/admin/agenda/calendar" class="nav-link active">
+              <i class="nev-icon fas bi bi-person-fill"></i>
+              <p>
+                Agenda
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
           </li>
           <li class="nav-item">
             <a href="{{ route('logout') }}" class="nav-link" style="background-color: #a9200e" id="" 
@@ -143,7 +164,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       Anything you want
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">Bellas Spa</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->
