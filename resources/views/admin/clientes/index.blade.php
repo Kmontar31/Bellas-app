@@ -4,8 +4,25 @@
     <div class="col-12">
         <h1>Clientes</h1>
         <a href="{{ route('admin.clientes.create') }}" class="btn btn-primary mb-3">Nuevo Cliente</a>
+        {{--Formulario de búsqueda --}}
+        <form action="{{ route('admin.clientes.index') }}" method="GET" class="mb-3">
+        <div class="input-group">
+            <input 
+                type="text" 
+                name="search" 
+                class="form-control" 
+                placeholder="Buscar por nombre, email" 
+                value="{{ $searchTerm ?? '' }}" 
+            >
+            <button class="btn btn-primary" type="submit">Buscar</button>
+            {{-- Botón para limpiar la búsqueda --}}
+            @if ($searchTerm)
+                <a href="{{ route('admin.clientes.index') }}" class="btn btn-secondary">Limpiar</a>
+            @endif
+        </div>
+    </form>
         <div class="table-responsive">
-                <a href="{{'admin/usuarios/create'}}" class="btn btn primary">
+                <a href="{{'admin/clientes/create'}}" class="btn btn primary">
                 </a>
             <table class="table table-striped table-hover">
                 <thead>
@@ -41,6 +58,11 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="mt-3">
+                <div class="d-flex justify-content-center">
+                    {{ $clientes->appends( ['search' => $searchTerm] )->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
         </div>
     </div>
 </div>

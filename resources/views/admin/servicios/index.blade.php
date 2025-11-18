@@ -4,6 +4,23 @@
     <div class="col-12">
         <h1>Servicios</h1>
         <a href="{{ route('admin.servicios.create') }}" class="btn btn-primary mb-3">Nuevo Servicio</a>
+        {{--Formulario de búsqueda --}}
+        <form action="{{ route('admin.servicios.index') }}" method="GET" class="mb-3">
+        <div class="input-group">
+            <input 
+                type="text" 
+                name="search" 
+                class="form-control" 
+                placeholder="Buscar por nombre, categoría" 
+                value="{{ $searchTerm ?? '' }}" 
+            >
+            <button class="btn btn-primary" type="submit">Buscar</button>
+            {{-- Botón para limpiar la búsqueda --}}
+            @if ($searchTerm)
+                <a href="{{ route('admin.servicios.index') }}" class="btn btn-secondary">Limpiar</a>
+            @endif
+        </div>
+    </form>
         <div class="table-responsive">
             <a href="{{'admin/servicios/create'}}" class="btn btn primary">
                 </a>
@@ -40,6 +57,11 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="mt-3">
+                <div class="d-flex justify-content-center">
+                    {{ $servicios->appends( ['search' => $searchTerm] )->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
         </div>
     </div>
 </div>

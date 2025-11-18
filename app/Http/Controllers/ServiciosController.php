@@ -7,10 +7,16 @@ use Illuminate\Http\Request;
 
 class ServiciosController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $servicios = Servicio::all();
-        return view('admin.servicios.index', compact('servicios'));
+        $searchTerm = $request->input('search');
+        $serviciosQuery = Servicio::query();
+        if ($searchTerm) {
+            $serviciosQuery->where('nombre', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('categoria', 'LIKE', '%' . $searchTerm . '%');
+        }
+        $servicios = $serviciosQuery->paginate(15);
+        return view('admin.servicios.index', compact('servicios', 'searchTerm'));
     }
 
     public function create()

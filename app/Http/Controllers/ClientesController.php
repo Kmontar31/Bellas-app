@@ -7,10 +7,16 @@ use Illuminate\Http\Request;
 
 class ClientesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Cliente::all();
-        return view('admin.clientes.index', compact('clientes'));
+        $searchTerm = $request->input('search');
+        $clientesQuery = Cliente::query();
+        if ($searchTerm) {
+            $clientesQuery->where('nombre', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
+        }
+        $clientes = $clientesQuery->paginate(15);
+        return view('admin.clientes.index', compact('clientes', 'searchTerm'));
     }
 
     public function create()

@@ -25,29 +25,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <nav class="main-header navbar navbar-expand navbar-dark navbar-dark ">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin')}}" class="nav-link">Inicio</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/servicios')}}" class="nav-link">Servicios</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/profesionales')}}" class="nav-link">Profesionales</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/clientes')}}" class="nav-link">Clientes</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/horarios')}}" class="nav-link">Disponibilidad</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('/admin/agenda/calendar')}}" class="nav-link">Agenda</a>
       </li>
     </ul>
   </nav>
@@ -76,46 +58,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Add icons to the links using the .nav-icon class
               with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link active">
-              <i class="nev-icon fas bi bi-person-fill"></i>
-              <p>
-                Inicio
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
              <a href="http://127.0.0.1:8000/admin/servicios" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
                 Servicio 
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
              <a href="http://127.0.0.1:8000/admin/profesionales" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
-                Profesioanles
-                <i class="right fas fa-angle-left"></i>
+                Profesionales
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
              <a href="http://127.0.0.1:8000/admin/clientes" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
                 Clientes 
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
              <a href="http://127.0.0.1:8000/admin/horarios" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
                 Disponibilidad
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
                <a href="http://127.0.0.1:8000/admin/agenda/calendar" class="nav-link active">
               <i class="nev-icon fas bi bi-person-fill"></i>
               <p>
                 Agenda
-                <i class="right fas fa-angle-left"></i>
+                <i class="right fas fa-angle-right"></i>
               </p>
             </a>
           </li>
@@ -131,7 +106,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </div>
+                                
           </li>
         </ul>
       </nav>
