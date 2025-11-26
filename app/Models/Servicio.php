@@ -15,8 +15,17 @@ class Servicio extends Model
         'nombre',
         'duracion_minutos',
         'precio',
-        'categoria'
+        'descripcion',
+        'categoria_id'
     ];
+
+    /**
+     * Servicio pertenece a una Categoria
+     */
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
 
     /**
      * Obtener los profesionales que ofrecen este servicio

@@ -8,6 +8,7 @@ use App\Models\Agenda;
 use App\Models\Cliente;
 use App\Models\Profesional;
 use App\Models\Servicio;
+use App\Models\Categoria;
 use App\Models\Bloqueo;
 use App\Models\Horario;
 use Illuminate\Support\Str;
@@ -29,6 +30,108 @@ class AgendaController extends Controller
             ->get();
 
         return view('admin.agenda.index', compact('citas', 'profesionales', 'servicios'));
+    }
+
+    /**
+     * Store a public appointment (from agendar page)
+     */
+    public function publicStore(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:191',
+            'email' => 'required|email|max:191',
+            'phone' => 'nullable|string|max:50',
+            'fecha' => 'required|date',
+            'hora' => 'required', // we'll parse time
+            'categoria' => 'required|string',
+            'servicio_id' => 'required|exists:servicios,id',
+            'profesional_id' => 'required|exists:profesionales,id',
+            'message' => 'nullable|string'
+        ]);
+
+        // Find or create cliente
+        $cliente = Cliente::firstOrCreate(
+            ['email' => $data['email']],
+            ['nombre' => $data['name'], 'telefono' => $data['phone'] ?? null]
+        );
+
+        $servicio = Servicio::findOrFail($data['servicio_id']);
+
+        // Compute start and end datetimes
+        $start = Carbon::parse($data['fecha'] . ' ' . $data['hora']);
+        $end = (clone $start)->addMinutes($servicio->duracion_minutos ?? 60);
+
+        // Business rule: no overlapping for the profesional
+        $conflict = Agenda::where('profesional_id', $data['profesional_id'])
+            ->where('fecha', $start->toDateString())
+            ->where(function($q) use ($start, $end) {
+                $q->where(function($q2) use ($start, $end) {
+                    $q2->where('hora_inicio', '<', $end->format('H:i:s'))
+                       ->where('hora_fin', '>', $start->format('H:i:s'));
+                });
+            })->exists();
+
+        if ($conflict) {
+            return back()->withInput()->withErrors(['hora' => 'El profesional no está disponible en el horario seleccionado.']);
+        }
+
+        $agenda = Agenda::create([
+            'cliente_id' => $cliente->id,
+            'servicio_id' => $servicio->id,
+            'profesional_id' => $data['profesional_id'],
+            'fecha' => $start->toDateString(),
+            'hora_inicio' => $start->format('H:i:s'),
+            'hora_fin' => $end->format('H:i:s'),
+            'estado' => 'pendiente',
+            'notas' => $data['message'] ?? null
+        ]);
+
+        return redirect()->route('agendar.form')->with('success', 'Reserva creada correctamente. Te contactaremos para confirmar.');
+    }
+
+    /**
+     * Return services by category (AJAX)
+     */
+    public function servicesByCategory(Request $request)
+    {
+        $categoryName = $request->query('categoria');
+        // Find the categoria by nombre, then get its servicios
+        $categoria = Categoria::where('nombre', $categoryName)->first();
+        if (!$categoria) {
+            return response()->json([]);
+        }
+        $services = $categoria->servicios()->get(['id','nombre','duracion_minutos','precio','descripcion']);
+        return response()->json($services);
+    }
+
+    /**
+     * Check availability for a profesional at given datetime
+     */
+    public function checkAvailability(Request $request)
+    {
+        $request->validate([
+            'profesional_id' => 'required|exists:profesionales,id',
+            'fecha' => 'required|date',
+            'hora' => 'required'
+        ]);
+
+        $profesionalId = $request->query('profesional_id');
+        $fecha = $request->query('fecha');
+        $hora = $request->query('hora');
+        $servicioId = $request->query('servicio_id');
+
+        $servicio = $servicioId ? Servicio::find($servicioId) : null;
+        $start = Carbon::parse($fecha . ' ' . $hora);
+        $end = $servicio ? (clone $start)->addMinutes($servicio->duracion_minutos ?? 60) : (clone $start)->addMinutes(60);
+
+        $conflict = Agenda::where('profesional_id', $profesionalId)
+            ->where('fecha', $start->toDateString())
+            ->where(function($q) use ($start, $end) {
+                $q->where('hora_inicio', '<', $end->format('H:i:s'))
+                  ->where('hora_fin', '>', $start->format('H:i:s'));
+            })->exists();
+
+        return response()->json(['available' => !$conflict]);
     }
 
     /**

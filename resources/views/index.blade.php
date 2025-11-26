@@ -104,7 +104,7 @@
                 Asperiores dolores sed et. Tenetur quia eos. Autem tempore quibusdam vel necessitatibus optio ad corporis.
               </p>
               <div class="text-center">
-                <a href="#about" class="more-btn"><span>Agendar</span> <i class="bi bi-chevron-right"></i></a>
+                <a href="{{ url('agendar') }}" class="more-btn"><span>Agendar</span> <i class="bi bi-chevron-right"></i></a>
               </div>
             </div>
           </div><!-- End Why Box -->
