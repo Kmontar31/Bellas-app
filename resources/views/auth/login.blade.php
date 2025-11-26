@@ -73,7 +73,7 @@
                     </form>
                     <br>
       <p class="mb-0">
-        <a href="register.html" class="text-center">¿No tienes Cuenta ?</a>
+        <a href="{{ route('register') }}" class="text-center">¿No tienes Cuenta ?</a>
       </p>
     </div>
     <!-- /.card-body -->
