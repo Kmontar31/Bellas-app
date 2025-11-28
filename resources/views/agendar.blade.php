@@ -1,3 +1,4 @@
+@extends('layouts.app')
 
 <section id="appointment" class="appointment section py-5">
 
@@ -20,7 +21,7 @@
             <div class="d-flex align-items-center">
               <i class="bi bi-check-circle me-2"></i>
               <div>
-                <strong>¡Éxito!</strong> Tu reserva ha sido registrada. Te contactaremos pronto.
+                <strong>¡Éxito!</strong> Tu reserva ha sido registrada.
               </div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -50,15 +51,15 @@
           <!-- Información Personal -->
           <div class="card mb-4 border-0 shadow-sm">
             <div class="card-header bg-gradient text-white border-0">
-              <h5 class="mb-0 d-flex align-items-center">
+              <h3 class="mb-0 d-flex align-items-center">
                 <i class="bi bi-person-circle me-2"></i>
                 Tu Información
-              </h5>
+              </h3>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label for="name" class="form-label fw-500">Nombre Completo <span class="text-danger">*</span></label>
+                  <label for="name" class="form-label fw-500">Nombre <span class="text-danger">*</span></label>
                   <input type="text" name="name" class="form-control form-control-lg @error('name') is-invalid @enderror" id="name" placeholder="Juan Pérez" required value="{{ old('name') }}">
                   @error('name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
@@ -81,10 +82,10 @@
           <!-- Selección de Servicio -->
           <div class="card mb-4 border-0 shadow-sm">
             <div class="card-header bg-gradient text-white border-0">
-              <h5 class="mb-0 d-flex align-items-center">
+              <h3 class="mb-0 d-flex align-items-center">
                 <i class="bi bi-stars me-2"></i>
                 Selecciona el Servicio
-              </h5>
+              </h3>
             </div>
             <div class="card-body">
               <div class="row">
@@ -314,8 +315,8 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const categoria = document.getElementById('categoria');
-  const servicioSel = document.getElementById('servicio_id');
+  const categoria = document.getElementById('nombre');
+  const servicioSel = document.getElementById('nombre');
   const profesionalSel = document.getElementById('profesional_id');
   const fecha = document.getElementById('fecha');
   const hora = document.getElementById('hora');
