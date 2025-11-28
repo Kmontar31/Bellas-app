@@ -100,8 +100,8 @@
             <div class="why-box" data-aos="zoom-out" data-aos-delay="200">
               <h3>Agendar tu Cita</h3>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
-                Asperiores dolores sed et. Tenetur quia eos. Autem tempore quibusdam vel necessitatibus optio ad corporis.
+                ¡Es hora de dedicarte un momento!
+                Agenda tu cita de forma rápida y sencilla para tu diseño de cejas, tu sesión de pestañas o tu tratamiento facial. Elige el día y la hora que mejor se adapten a ti y prepárate para lucir radiante.
               </p>
               <div class="text-center">
                 <a href="#about" class="more-btn"><span>Agendar</span> <i class="bi bi-chevron-right"></i></a>
@@ -129,35 +129,28 @@
           <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
             <h3>Sobre Nosotras</h3>
             <p>
-              Dolor iure expedita id fuga asperiores qui sunt consequatur minima. Quidem voluptas deleniti. Sit quia molestiae quia quas qui magnam itaque veritatis dolores. Corrupti totam ut eius incidunt reiciendis veritatis asperiores placeat.
-            </p>
+             En bellas-Spa nació de una pasión genuina: ver la confianza florecer en los ojos de nuestras clientas.
+             <br>
+             Sabemos que un buen diseño de cejas o un tratamiento facial va mucho más allá de lo estético; es una dosis de autoestima.
+            <br>
+             Somos un equipo de mujeres soñadoras, dedicadas a escucharte y a entender lo que realmente buscas.
+             <br>
+             Queremos que te sientas como en casa,
+             sabiendo que estás en manos de profesionales que se preocupan honestamente por resaltar tu belleza natural.
             <ul>
               <li>
-                <i class="fa-solid fa-vial-circle-check"></i>
                 <div>
-                  <h5>Ullamco laboris nisi ut aliquip consequat</h5>
-                  <p>Magni facilis facilis repellendus cum excepturi quaerat praesentium libre trade</p>
+                  <h5>Te Escuchamos: Creemos en la belleza personalizada, no en soluciones genéricas.</h5>
                 </div>
               </li>
               <li>
-                <i class="fa-solid fa-pump-medical"></i>
                 <div>
-                  <h5>Magnam soluta odio exercitationem reprehenderi</h5>
-                  <p>Quo totam dolorum at pariatur aut distinctio dolorum laudantium illo direna pasata redi</p>
+                  <h5>Te Cuidamos: Utilizamos productos suaves y éticos para tu bienestar.</h5>
                 </div>
               </li>
                   <li>
-                <i class="fa-solid fa-pump-medical"></i>
                 <div>
-                  <h5>Magnam soluta odio exercitationem reprehenderi</h5>
-                  <p>Quo totam dolorum at pariatur aut distinctio dolorum laudantium illo direna pasata redi</p>
-                </div>
-              </li>
-              <li>
-                <i class="fa-solid fa-heart-circle-xmark"></i>
-                <div>
-                  <h5>Voluptatem et qui exercitationem</h5>
-                  <p>Et velit et eos maiores est tempora et quos dolorem autem tempora incidunt maxime veniam</p>
+                  <h5>Te Inspiramos: Nuestro mayor logro es que salgas de aquí sintiéndote más poderosa y radiante que nunca.</h5>
                 </div>
               </li>
             </ul>
@@ -174,7 +167,7 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Servicios </h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <p>Un catálogo de experiencias diseñadas para resaltar tu belleza natural con excelencia.</p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -189,7 +182,7 @@
               <a href="#" class="stretched-link">
                 <h3>Estética Facial</h3>
               </a>
-              <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis tempore et consequatur.</p>
+              <p>Tu rostro es tu carta de presentación. Te ayudamos a renovar tu luz natural para que proyectes la confianza y el bienestar que mereces, con tratamientos personalizados y de alta calidad.</p>
             </div>
           </div><!-- End Service Item -->
 
@@ -202,7 +195,7 @@
               <a href="#" class="stretched-link">
                 <h3>Uñas</h3>
               </a>
-              <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut nesciunt dolorem.</p>
+              <p>Tus manos hablan por ti. Con nuestros diseños y cuidados profesionales, convertimos tus uñas en el lienzo perfecto para expresar tu personalidad y estilo único.</p>
             </div>
           </div><!-- End Service Item -->
 
@@ -214,7 +207,7 @@
               <a href="#" class="stretched-link">
                 <h3>Pestañas</h3>
               </a>
-              <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci eos earum corrupti.</p>
+              <p>Despierta cada mañana con una mirada que cautiva. Somos expertas en realzar la belleza natural de tus ojos con extensiones y liftings que te darán volumen y longitud perfectos.</p>
             </div>
           </div><!-- End Service Item -->
 
@@ -226,7 +219,7 @@
               <a href="#" class="stretched-link">
                 <h3>Cejas</h3>
               </a>
-              <p>Non et temporibus minus omnis sed dolor esse consequatur. Cupiditate sed error ea fuga sit provident adipisci neque.</p>
+              <p>Las cejas son el marco de tu mirada. Déjanos diseñarlas y perfeccionarlas para balancear tus facciones, dándote una expresión definida y armoniosa sin necesidad de maquillaje diario.</p>
               <a href="#" class="stretched-link"></a>
             </div>
           </div><!-- End Service Item -->
@@ -238,75 +231,13 @@
 
     </section><!-- /Services Section -->
 
-    <!-- Appointment Section -->
-    <section id="appointment" class="appointment section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Agenda</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
-          <div class="row">
-            <div class="col-md-4 form-group">
-              <input type="text" name="name" class="form-control" id="name" placeholder="Nombre Completo" required="">
-            </div>
-            <div class="col-md-4 form-group mt-3 mt-md-0">
-              <input type="email" class="form-control" name="email" id="email" placeholder="Correo Eletronico" required="">
-            </div>
-            <div class="col-md-4 form-group mt-3 mt-md-0">
-              <input type="tel" class="form-control" name="phone" id="phone" placeholder="Numero de Telefono" required="">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 form-group mt-3">
-              <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Appointment Date" required="">
-            </div>
-            <div class="col-md-4 form-group mt-3">
-              <select name="department" id="department" class="form-select" required="">
-                <option value="">Categoria</option>
-                <option value="Department 1">Estética Facial </option>
-                <option value="Department 2">Uñas</option>
-                <option value="Department 3">Cejas</option>
-                <option value="Department 3">Pestañas</option>
-              </select>
-            </div>
-            <div class="col-md-4 form-group mt-3">
-              <select name="doctor" id="doctor" class="form-select" required="">
-                <option value="">Profesionales</option>
-                <option value="Doctor 1">Angie Ospina</option>
-                <option value="Doctor 2">Maria Isabel</option>
-                <option value="Doctor 3">Tatiana Ospina</option>
-                <option value="Doctor 3">Vanesa Ospina</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group mt-3">
-            <textarea class="form-control" name="message" rows="5" placeholder="Message (Optional)"></textarea>
-          </div>
-          <div class="mt-3">
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-            <div class="text-center"><button type="submit">Agenda tu Cita</button></div>
-          </div>
-        </form>
-
-      </div>
-
-    </section><!-- /Appointment Section -->
-
     <!-- Doctors Section -->
     <section id="doctors" class="doctors section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Profesionales</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <p>Tu belleza está en manos de profesionales. Confía en la precisión y experiencia de nuestras especialistas.</p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -318,8 +249,7 @@
               <div class="pic"><img src="assets/img/doctors/doctors-1.jpg" class="img-fluid" alt=""></div>
               <div class="member-info">
                 <h4>Angie ospina</h4>
-                <span>Chief Medical Officer</span>
-                <p>Explicabo voluptatem mollitia et repellat qui dolorum quasi</p>
+                <p>Su pasión es transformar miradas y elevar la confianza. Angie garantiza que cada servicio se realice con la máxima precisión y el mejor arte.</p>
                 <div class="social">
                   <a href=""><i class="bi bi-facebook"></i></a>
                   <a href=""><i class="bi bi-instagram"></i></a>
@@ -333,8 +263,7 @@
               <div class="pic"><img src="assets/img/doctors/doctors-2.jpg" class="img-fluid" alt=""></div>
               <div class="member-info">
                 <h4>Tatiana Ospina</h4>
-                <span>Anesthesiologist</span>
-                <p>Aut maiores voluptates amet et quis praesentium qui senda para</p>
+                <p>Dedicada a tu bienestar y satisfacción. Ella te guiará durante todo el proceso para que te sientas cómoda y ames el resultado final de tu tratamiento.</p>
                 <div class="social">
                   <a href=""><i class="bi bi-facebook"></i></a>
                   <a href=""><i class="bi bi-instagram"></i></a>
@@ -348,8 +277,7 @@
               <div class="pic"><img src="assets/img/doctors/doctors-3.jpg" class="img-fluid" alt=""></div>
               <div class="member-info">
                 <h4>Maria Isabel Betancur</h4>
-                <span>Cardiology</span>
-                <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p>
+                <p>Su calidez y profesionalismo te harán sentir cómoda. Ella te ofrece tratamientos personalizados con resultados que superarán tus expectativas.</p>
                 <div class="social">
                   <a href=""><i class="bi bi-facebook"></i></a>
                   <a href=""><i class="bi bi-instagram"></i></a>
@@ -363,8 +291,7 @@
               <div class="pic"><img src="assets/img/doctors/doctors-4.jpg" class="img-fluid" alt=""></div>
               <div class="member-info">
                 <h4>Vanesa ospina</h4>
-                <span>Neurosurgeon</span>
-                <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p>
+                <p>Su trabajo se distingue por la atención al detalle y la búsqueda de la excelencia en la técnica, garantizando resultados de alta calidad que realzan la belleza natural de sus clientes.</p>
                 <div class="social">
                   <a href=""><i class="bi bi-facebook"></i></a>
                   <a href=""><i class="bi bi-instagram"></i></a>
@@ -387,7 +314,7 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Nuestra Galaria De Nuestro Trabajo </h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <p>La mejor prueba de nuestra calidad. Mira los resultados reales de la dedicación y el talento de nuestras profesionales.</p>
       </div><!-- End Section Title -->
 
       <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
@@ -470,7 +397,7 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Contactos</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <p>Tu próximo tratamiento de belleza está a solo un mensaje de distancia. ¡Conversemos!</p>
       </div><!-- End Section Title -->
 
       <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
