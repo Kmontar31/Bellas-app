@@ -104,7 +104,7 @@
                 Agenda tu cita de forma rápida y sencilla para tu diseño de cejas, tu sesión de pestañas o tu tratamiento facial. Elige el día y la hora que mejor se adapten a ti y prepárate para lucir radiante.
               </p>
               <div class="text-center">
-                <a href="#about" class="more-btn"><span>Agendar</span> <i class="bi bi-chevron-right"></i></a>
+                <a href="{{ url('agendar') }}" class="more-btn"><span>Agendar</span> <i class="bi bi-chevron-right"></i></a>
               </div>
             </div>
           </div><!-- End Why Box -->

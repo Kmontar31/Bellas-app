@@ -28,6 +28,20 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+// Public booking page
+Route::get('/agendar', function() {
+    $servicios = App\Models\Servicio::all();
+    $profesionales = App\Models\Profesional::all();
+    // Obtener categorías desde la tabla `categorias`
+    $categories = App\Models\Categoria::orderBy('nombre')->pluck('nombre');
+    return view('agendar', compact('servicios', 'profesionales', 'categories'));
+})->name('agendar.form');
+
+// Endpoints for public booking actions
+Route::post('/agendar', [AgendaController::class, 'publicStore'])->name('agendar.store');
+Route::get('/agendar/services', [AgendaController::class, 'servicesByCategory'])->name('agendar.services');
+Route::get('/agendar/check-availability', [AgendaController::class, 'checkAvailability'])->name('agendar.check');
+
 // Grupo de rutas para el admin
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
