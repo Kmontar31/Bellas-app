@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Servicio;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 
 class ServiciosController extends Controller
 {
     public function index(Request $request)
     {
+        $servicios = Servicio::with('categoria')->get();
         $searchTerm = $request->input('search');
         $serviciosQuery = Servicio::query();
         if ($searchTerm) {

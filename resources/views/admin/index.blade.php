@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
 <div class="row">
-        <h1>Panel principal</h1>
+        <h1>BIENVENIDOS A BELLAS SPA</h1>
 </div>
 @endsection

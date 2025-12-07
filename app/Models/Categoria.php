@@ -18,6 +18,6 @@ class Categoria extends Model
      */
     public function servicios()
     {
-        return $this->hasMany(Servicio::class, 'categoria_id');
+        return $this->hasMany(Servicio::class);
     }
 }

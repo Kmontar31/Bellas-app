@@ -72,9 +72,6 @@
                         </div>
                     </form>
                     <br>
-      <p class="mb-0">
-        <a href="{{ route('register') }}" class="text-center">¿No tienes Cuenta ?</a>
-      </p>
     </div>
     <!-- /.card-body -->
   </div>

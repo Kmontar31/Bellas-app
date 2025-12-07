@@ -40,7 +40,7 @@
                             <td>{{ $servicio->nombre }}</td>
                             <td>{{ $servicio->duracion_minutos ?? '-' }}</td>
                             <td>{{ isset($servicio->precio) ? number_format($servicio->precio, 2) : '-' }}</td>
-                            <td>{{ $servicio->categoria ?? '-' }}</td>
+                            <td>{{ $servicio->Categoria->nombre ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('admin.servicios.edit', $servicio->id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
                                 <form action="{{ route('admin.servicios.destroy', $servicio->id) }}" method="POST" style="display:inline-block;">
