@@ -28,6 +28,14 @@ class Servicio extends Model
     }
 
     /**
+     * Alias para acceder a categoria con mayúscula (compatibilidad)
+     */
+    public function getCategoria()
+    {
+        return $this->categoria;
+    }
+
+    /**
      * Obtener los profesionales que ofrecen este servicio
      */
     public function profesionales()

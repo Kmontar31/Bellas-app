@@ -4,14 +4,15 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-warning text-dark">
                     <h5 class="mb-0">
-                        <i class="fas fa-spa"></i> Nuevo Servicio
+                        <i class="fas fa-edit"></i> Editar Servicio
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.servicios.store') }}" method="POST">
+                    <form action="{{ route('admin.servicios.update', $servicio) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         
                         <div class="mb-3">
                             <label for="nombre" class="form-label">
@@ -22,7 +23,7 @@
                                 id="nombre" 
                                 name="nombre" 
                                 class="form-control @error('nombre') is-invalid @enderror" 
-                                value="{{ old('nombre') }}"
+                                value="{{ old('nombre', $servicio->nombre) }}"
                                 placeholder="Ej: Extensión de Pestañas"
                                 required
                             >
@@ -41,7 +42,7 @@
                                 class="form-control @error('descripcion') is-invalid @enderror" 
                                 placeholder="Describe el servicio detalladamente..."
                                 rows="3"
-                            >{{ old('descripcion') }}</textarea>
+                            >{{ old('descripcion', $servicio->descripcion) }}</textarea>
                             @error('descripcion')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -58,7 +59,7 @@
                                         id="duracion_minutos" 
                                         name="duracion_minutos" 
                                         class="form-control @error('duracion_minutos') is-invalid @enderror" 
-                                        value="{{ old('duracion_minutos') }}"
+                                        value="{{ old('duracion_minutos', $servicio->duracion_minutos) }}"
                                         placeholder="60"
                                         required
                                     >
@@ -78,7 +79,7 @@
                                         id="precio" 
                                         name="precio" 
                                         class="form-control @error('precio') is-invalid @enderror" 
-                                        value="{{ old('precio') }}"
+                                        value="{{ old('precio', $servicio->precio) }}"
                                         placeholder="0.00"
                                         step="0.01"
                                         required
@@ -102,7 +103,7 @@
                             >
                                 <option value="">-- Seleccionar Categoría --</option>
                                 @foreach(\App\Models\Categoria::all() as $categoria)
-                                    <option value="{{ $categoria->id }}" @selected(old('categoria_id') == $categoria->id)>
+                                    <option value="{{ $categoria->id }}" @selected(old('categoria_id', $servicio->categoria_id) == $categoria->id)>
                                         {{ $categoria->nombre }}
                                     </option>
                                 @endforeach
@@ -113,8 +114,8 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Servicio
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Actualizar Servicio
                             </button>
                             <a href="{{ route('admin.servicios.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Volver

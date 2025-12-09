@@ -43,11 +43,13 @@ class AgendaController extends Controller
             'phone' => 'nullable|string|max:50',
             'fecha' => 'required|date',
             'hora' => 'required', // we'll parse time
-            'categoria' => 'required|string',
+            'categoria' => 'required|exists:categorias,id',
             'servicio_id' => 'required|exists:servicios,id',
             'profesional_id' => 'required|exists:profesionales,id',
             'message' => 'nullable|string'
         ]);
+
+        \Log::info('publicStore data:', $data);
 
         // Find or create cliente
         $cliente = Cliente::firstOrCreate(
@@ -60,6 +62,8 @@ class AgendaController extends Controller
         // Compute start and end datetimes
         $start = Carbon::parse($data['fecha'] . ' ' . $data['hora']);
         $end = (clone $start)->addMinutes($servicio->duracion_minutos ?? 60);
+
+        \Log::info('Parsed times - Start: ' . $start . ' (' . $start->format('H:i:s') . '), End: ' . $end . ' (' . $end->format('H:i:s') . ')');
 
         // Business rule: no overlapping for the profesional
         $conflict = Agenda::where('profesional_id', $data['profesional_id'])
@@ -86,6 +90,8 @@ class AgendaController extends Controller
             'notas' => $data['message'] ?? null
         ]);
 
+        \Log::info('Agenda created - ID: ' . $agenda->id . ', fecha: ' . $agenda->fecha . ', hora_inicio: ' . $agenda->hora_inicio . ', hora_fin: ' . $agenda->hora_fin);
+
         return redirect()->route('agendar.form')->with('success', 'Reserva creada correctamente. Te contactaremos para confirmar.');
     }
 
@@ -94,14 +100,74 @@ class AgendaController extends Controller
      */
     public function servicesByCategory(Request $request)
     {
-        $categoryName = $request->query('categoria');
-        // Find the categoria by nombre, then get its servicios
-        $categoria = Categoria::where('nombre', $categoryName)->first();
-        if (!$categoria) {
-            return response()->json([]);
+        try {
+            $categoriaId = $request->query('categoria');
+            
+            \Log::info('servicesByCategory called with categoria=' . $categoriaId);
+            
+            // Validate that categoria is numeric
+            if (!$categoriaId || !is_numeric($categoriaId)) {
+                \Log::warning('categoria is not numeric or missing: ' . $categoriaId);
+                return response()->json([], 400);
+            }
+            
+            // Find the categoria by ID
+            $categoria = Categoria::find($categoriaId);
+            
+            if (!$categoria) {
+                \Log::warning('categoria not found with id: ' . $categoriaId);
+                return response()->json([], 404);
+            }
+            
+            \Log::info('Found categoria: ' . $categoria->nombre);
+            
+            // Get services related to this category
+            $services = Servicio::where('categoria_id', $categoria->id)
+                ->orderBy('nombre')
+                ->get(['id', 'nombre', 'duracion_minutos', 'precio']);
+            
+            \Log::info('Found ' . count($services) . ' services for categoria ' . $categoria->id);
+            
+            // Ensure we return valid JSON array
+            return response()->json($services, 200)
+                ->header('Content-Type', 'application/json');
+        } catch (\Exception $e) {
+            \Log::error('servicesByCategory error: ' . $e->getMessage());
+            return response()->json([], 500);
         }
-        $services = $categoria->servicios()->get(['id','nombre','duracion_minutos','precio','descripcion']);
-        return response()->json($services);
+    }
+
+    /**
+     * Get professional work schedule for a specific date (AJAX)
+     */
+    public function getProfessionalSchedule(Request $request)
+    {
+        try {
+            $profesionalId = $request->query('profesional_id');
+            $fecha = $request->query('fecha');
+
+            if (!$profesionalId || !$fecha) {
+                return response()->json(['horarios' => [], 'dayOfWeek' => null], 400);
+            }
+
+            $date = Carbon::parse($fecha);
+            $dayOfWeek = $date->dayOfWeek; // 0 = Sunday
+
+            // Get available schedules for this professional on this day of week
+            $horarios = Horario::where('profesional_id', $profesionalId)
+                ->where('dia_semana', $dayOfWeek)
+                ->orderBy('hora_inicio')
+                ->get(['hora_inicio', 'hora_fin']);
+
+            return response()->json([
+                'horarios' => $horarios,
+                'dayOfWeek' => $dayOfWeek,
+                'fecha' => $fecha
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('getProfessionalSchedule error: ' . $e->getMessage());
+            return response()->json(['horarios' => [], 'error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -109,29 +175,86 @@ class AgendaController extends Controller
      */
     public function checkAvailability(Request $request)
     {
-        $request->validate([
-            'profesional_id' => 'required|exists:profesionales,id',
-            'fecha' => 'required|date',
-            'hora' => 'required'
-        ]);
+        try {
+            $profesionalId = $request->query('profesional_id');
+            $fecha = $request->query('fecha');
+            $hora = $request->query('hora');
+            $servicioId = $request->query('servicio_id');
 
-        $profesionalId = $request->query('profesional_id');
-        $fecha = $request->query('fecha');
-        $hora = $request->query('hora');
-        $servicioId = $request->query('servicio_id');
+            \Log::info('checkAvailability: profesional_id=' . $profesionalId . ', fecha=' . $fecha . ', hora=' . $hora . ', servicio_id=' . $servicioId);
 
-        $servicio = $servicioId ? Servicio::find($servicioId) : null;
-        $start = Carbon::parse($fecha . ' ' . $hora);
-        $end = $servicio ? (clone $start)->addMinutes($servicio->duracion_minutos ?? 60) : (clone $start)->addMinutes(60);
+            // Validate that required params are present
+            if (!$profesionalId || !$fecha || !$hora) {
+                \Log::warning('Missing required parameters');
+                return response()->json(['available' => false], 400);
+            }
 
-        $conflict = Agenda::where('profesional_id', $profesionalId)
-            ->where('fecha', $start->toDateString())
-            ->where(function($q) use ($start, $end) {
-                $q->where('hora_inicio', '<', $end->format('H:i:s'))
-                  ->where('hora_fin', '>', $start->format('H:i:s'));
-            })->exists();
+            // Validate that profesional exists
+            if (!Profesional::find($profesionalId)) {
+                \Log::warning('Profesional not found: ' . $profesionalId);
+                return response()->json(['available' => false], 404);
+            }
 
-        return response()->json(['available' => !$conflict]);
+            $servicio = $servicioId ? Servicio::find($servicioId) : null;
+            $start = Carbon::parse($fecha . ' ' . $hora);
+            $end = $servicio ? (clone $start)->addMinutes($servicio->duracion_minutos ?? 60) : (clone $start)->addMinutes(60);
+
+            \Log::info('Checking conflict from ' . $start . ' to ' . $end);
+
+            // Verificar conflicto con citas existentes
+            $conflict = Agenda::where('profesional_id', $profesionalId)
+                ->where('fecha', $start->toDateString())
+                ->where(function($q) use ($start, $end) {
+                    $q->where('hora_inicio', '<', $end->format('H:i:s'))
+                      ->where('hora_fin', '>', $start->format('H:i:s'));
+                })->exists();
+
+            \Log::info('Conflict found: ' . ($conflict ? 'yes' : 'no'));
+
+            if ($conflict) {
+                return response()->json(['available' => false, 'reason' => 'Ya existe una cita en este horario']);
+            }
+
+            // Verificar disponibilidad de horarios (horarios de trabajo del profesional)
+            $dayOfWeek = $start->dayOfWeek;
+            // Carbon usa 0=Sunday, pero nosotros usamos 0=Domingo, así que es compatible
+            
+            $horariosDisponibles = Horario::where('profesional_id', $profesionalId)
+                ->where('dia_semana', $dayOfWeek)
+                ->get();
+
+            \Log::info('Found ' . count($horariosDisponibles) . ' horarios para el día ' . $dayOfWeek);
+
+            // Si no hay horarios definidos, no está disponible
+            if ($horariosDisponibles->isEmpty()) {
+                \Log::info('No hay horarios definidos para este día');
+                return response()->json(['available' => false, 'reason' => 'El profesional no tiene horario definido para este día']);
+            }
+
+            // Verificar que la hora solicitada esté dentro de algún horario disponible
+            $horaInicio = $start->format('H:i:s');
+            $horaFin = $end->format('H:i:s');
+
+            $estaDisponible = false;
+            foreach ($horariosDisponibles as $horario) {
+                // Verificar que la cita completa esté dentro del horario disponible
+                if ($horaInicio >= $horario->hora_inicio && $horaFin <= $horario->hora_fin) {
+                    $estaDisponible = true;
+                    break;
+                }
+            }
+
+            if (!$estaDisponible) {
+                \Log::info('Horario solicitado (' . $horaInicio . ' - ' . $horaFin . ') no está disponible');
+                return response()->json(['available' => false, 'reason' => 'El horario solicitado no está disponible']);
+            }
+
+            \Log::info('Disponibilidad confirmada');
+            return response()->json(['available' => true]);
+        } catch (\Exception $e) {
+            \Log::error('checkAvailability error: ' . $e->getMessage());
+            return response()->json(['available' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -152,6 +275,8 @@ class AgendaController extends Controller
         $profesionalId = $request->query('profesional_id');
         $servicioId = $request->query('servicio_id');
         
+        \Log::info('events() called with start=' . $start . ', end=' . $end . ', prof=' . $profesionalId . ', serv=' . $servicioId);
+        
         $events = [];
 
         // 1. Obtener citas
@@ -166,24 +291,39 @@ class AgendaController extends Controller
 
         // Convertir citas a eventos
         foreach ($citas as $cita) {
-            $citaStart = Carbon::parse($cita->fecha->format('Y-m-d') . ' ' . $cita->hora_inicio);
-            $citaEnd = Carbon::parse($cita->fecha->format('Y-m-d') . ' ' . $cita->hora_fin);
+            try {
+                // $cita->fecha es un Carbon date, $cita->hora_inicio y hora_fin son strings HH:MM:SS
+                $fechaStr = $cita->fecha->format('Y-m-d');
+                
+                $citaStart = Carbon::parse($fechaStr . ' ' . $cita->hora_inicio);
+                $citaEnd = Carbon::parse($fechaStr . ' ' . $cita->hora_fin);
 
-            $events[] = [
-                'id' => $cita->id,
-                'title' => ($cita->cliente ? $cita->cliente->nombre . ' - ' : '') . 
-                          ($cita->servicio ? $cita->servicio->nombre : 'Cita'),
-                'start' => $citaStart->toIso8601String(),
-                'end' => $citaEnd->toIso8601String(),
-                'extendedProps' => [
-                    'profesional' => optional($cita->profesional)->nombre,
-                    'servicio' => optional($cita->servicio)->nombre,
-                    'estado' => $cita->estado ?? null,
-                    'tipo' => 'cita',
-                    'cliente' => optional($cita->cliente)->nombre
-                ],
-                'className' => 'ocupado'
-            ];
+                // Formatear hora en formato HH:MM
+                $horaInicio = substr($cita->hora_inicio, 0, 5);
+
+                $event = [
+                    'id' => $cita->id,
+                    'title' => $horaInicio . ' - ' . ($cita->servicio ? $cita->servicio->nombre : 'Cita'),
+                    'start' => $citaStart->toIso8601String(),
+                    'end' => $citaEnd->toIso8601String(),
+                    'extendedProps' => [
+                        'profesional' => optional($cita->profesional)->nombre,
+                        'servicio' => optional($cita->servicio)->nombre,
+                        'estado' => $cita->estado ?? null,
+                        'tipo' => 'cita',
+                        'cliente' => optional($cita->cliente)->nombre
+                    ],
+                    'backgroundColor' => '#dc3545',
+                    'borderColor' => '#c82333',
+                    'textColor' => '#fff'
+                ];
+                
+                \Log::info('Event created - ID: ' . $cita->id . ', start: ' . $event['start'] . ', end: ' . $event['end']);
+                $events[] = $event;
+            } catch (\Exception $e) {
+                \Log::error('Error parsing cita ' . $cita->id . ': ' . $e->getMessage() . 
+                           ' | fecha: ' . $cita->fecha . ' | hora_inicio: ' . $cita->hora_inicio . ' | hora_fin: ' . $cita->hora_fin);
+            }
         }
 
         // 2. Obtener horarios disponibles
@@ -197,12 +337,16 @@ class AgendaController extends Controller
         while ($currentDate <= $end) {
             foreach ($horarios as $horario) {
                 if ($currentDate->dayOfWeek == $horario->dia_semana) {
+                    $horarioStart = Carbon::parse($currentDate->format('Y-m-d') . ' ' . $horario->hora_inicio);
+                    $horarioEnd = Carbon::parse($currentDate->format('Y-m-d') . ' ' . $horario->hora_fin);
                     $events[] = [
                         'title' => 'Disponible - ' . $horario->profesional->nombre,
-                        'start' => $currentDate->format('Y-m-d') . ' ' . $horario->hora_inicio,
-                        'end' => $currentDate->format('Y-m-d') . ' ' . $horario->hora_fin,
-                        'className' => 'disponible',
-                        'rendering' => 'background'
+                        'start' => $horarioStart->toIso8601String(),
+                        'end' => $horarioEnd->toIso8601String(),
+                        'backgroundColor' => '#28a745',
+                        'borderColor' => '#1e7e34',
+                        'textColor' => '#fff',
+                        'display' => 'background'
                     ];
                 }
             }
@@ -235,6 +379,7 @@ class AgendaController extends Controller
             ];
         }
 
+        \Log::info('Returning ' . count($events) . ' events');
         return response()->json($events);
     }
 
@@ -260,10 +405,15 @@ class AgendaController extends Controller
             'profesional_id' => 'required|exists:profesionales,id',
             'fecha' => 'required|date',
             'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
-            'estado' => 'required|in:pendiente,confirmada,cancelada',
+            'hora_fin' => 'required|date_format:H:i',
+            'estado' => 'nullable|in:pendiente,confirmada,completada,cancelada',
             'notas' => 'nullable|string'
         ]);
+
+        // Si no se proporciona estado, usar 'pendiente'
+        if (!isset($data['estado'])) {
+            $data['estado'] = 'pendiente';
+        }
 
         $cita = Agenda::create($data);
         
@@ -336,5 +486,14 @@ class AgendaController extends Controller
         $bloqueo = Bloqueo::findOrFail($id);
         $bloqueo->delete();
         return response()->json(['message' => 'Bloqueo eliminado correctamente']);
+    }
+
+    /**
+     * Mostrar modal de detalles de cita
+     */
+    public function showModal(Agenda $agenda)
+    {
+        $agenda->load('cliente', 'profesional', 'servicio');
+        return view('admin.agenda.partials.modal-detalle-cita', compact('agenda'));
     }
 }

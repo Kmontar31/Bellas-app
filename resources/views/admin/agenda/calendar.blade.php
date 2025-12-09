@@ -77,6 +77,7 @@
     <div id="modalesContainer"></div>
     @include('components.toast')
     @include('admin.agenda.partials.modal-bloquear')
+    @include('admin.agenda.partials.modal-crear-cita')
 @endsection
 
 @push('scripts')
@@ -102,7 +103,19 @@
                 if (servicioFilter && servicioFilter.value) url.searchParams.append('servicio_id', servicioFilter.value);
                 fetch(url).then(r => r.json()).then(data => successCallback(data)).catch(e => { failureCallback(e); showToast('Error al cargar eventos','text-bg-danger'); });
             },
-            eventClick: function(info) { if (info.event.extendedProps.tipo === 'cita') showCitaModal(info.event.id); else if (info.event.extendedProps.tipo === 'bloqueo') {/* mostrar bloqueo */} },
+            // Click en un evento existente - mostrar detalles
+            eventClick: function(info) { 
+                if (info.event.extendedProps.tipo === 'cita') {
+                    showCitaModal(info.event.id); 
+                } else if (info.event.extendedProps.tipo === 'bloqueo') {
+                    // Mostrar detalles del bloqueo
+                } 
+            },
+            // Click en una fecha/hora vacía - crear nueva cita
+            select: function(info) {
+                const fecha = info.startStr.split('T')[0]; // Extraer solo la fecha
+                openCrearCitaModal(fecha);
+            },
             eventDrop: async function(info) {
                 if (info.event.extendedProps && info.event.extendedProps.block) { info.revert(); showToast('No se pueden mover bloqueos','text-bg-warning'); return; }
                 try {

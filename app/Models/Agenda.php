@@ -24,8 +24,6 @@ class Agenda extends Model
 
     protected $casts = [
         'fecha' => 'date',
-        'hora_inicio' => 'datetime',
-        'hora_fin' => 'datetime',
     ];
 
     /**

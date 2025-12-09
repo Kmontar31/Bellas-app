@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.booking')
 
 <section id="appointment" class="appointment section py-5">
 
@@ -94,7 +94,7 @@
                   <select id="categoria" name="categoria" class="form-select form-select-lg @error('categoria') is-invalid @enderror" required>
                     <option value="">-- Selecciona una categoría --</option>
                     @foreach($categories as $cat)
-                      <option value="{{ $cat }}" @selected(old('categoria') === $cat)>{{ $cat }}</option>
+                      <option value="{{ $cat->id }}" @selected(old('categoria') == $cat->id)>{{ $cat->nombre }}</option>
                     @endforeach
                   </select>
                   @error('categoria')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
@@ -128,7 +128,9 @@
                 </div>
                 <div class="col-md-4 mb-3">
                   <label for="hora" class="form-label fw-500">Hora <span class="text-danger">*</span></label>
-                  <input type="time" name="hora" id="hora" class="form-control form-control-lg @error('hora') is-invalid @enderror" required value="{{ old('hora') }}">
+                  <select id="hora" name="hora" class="form-select form-select-lg @error('hora') is-invalid @enderror" required disabled>
+                    <option value="">-- Selecciona fecha primero --</option>
+                  </select>
                   @error('hora')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
 
@@ -315,8 +317,8 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const categoria = document.getElementById('nombre');
-  const servicioSel = document.getElementById('nombre');
+  const categoria = document.getElementById('categoria');
+  const servicioSel = document.getElementById('servicio_id');
   const profesionalSel = document.getElementById('profesional_id');
   const fecha = document.getElementById('fecha');
   const hora = document.getElementById('hora');
@@ -327,25 +329,73 @@ document.addEventListener('DOMContentLoaded', function() {
   const today = new Date().toISOString().split('T')[0];
   fecha.setAttribute('min', today);
 
+  // Configuración de horarios
+  const INTERVAL = 15;   // 15 minutos
+
+  /**
+   * Generar opciones de hora con intervalos de 15 minutos dentro de un rango
+   */
+  function generateTimeOptions(startHour, endHour) {
+    const options = [];
+    for (let h = startHour; h < endHour; h++) {
+      for (let m = 0; m < 60; m += INTERVAL) {
+        const hour = String(h).padStart(2, '0');
+        const min = String(m).padStart(2, '0');
+        const time = `${hour}:${min}`;
+        const timeLabel = h > 12 ? `${h - 12}:${min} PM` : h === 12 ? `12:${min} PM` : `${h}:${min} AM`;
+        options.push({ value: time, label: timeLabel });
+      }
+    }
+    return options;
+  }
+
+  // Almacenar opciones de tiempo para cada horario del profesional
+  let timeOptions = [];
+
   /**
    * Cargar servicios por categoría
    */
   async function loadServices(cat) {
+    if (!cat) {
+      servicioSel.innerHTML = '<option value="">-- Selecciona categoría primero --</option>';
+      servicioSel.disabled = true;
+      return;
+    }
+
     servicioSel.innerHTML = '<option value="">⏳ Cargando servicios...</option>';
     servicioSel.disabled = true;
     
     try {
-      const res = await fetch('{{ route('agendar.services') }}?categoria=' + encodeURIComponent(cat));
+      const url = '{{ route('agendar.services') }}?categoria=' + encodeURIComponent(cat);
+      console.log('Cargando servicios desde:', url);
+      console.log('Categoría ID:', cat);
+      
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      console.log('Response status:', res.status);
       
       if (!res.ok) {
-        throw new Error('Error al cargar servicios');
+        const errorText = await res.text();
+        console.error('Error HTTP:', res.status, res.statusText);
+        console.error('Response body:', errorText);
+        throw new Error(`Error al cargar servicios (HTTP ${res.status})`);
       }
       
       const data = await res.json();
+      console.log('Servicios cargados:', data);
+      console.log('Número de servicios:', Array.isArray(data) ? data.length : 0);
       
-      if (!data || data.length === 0) {
+      if (!Array.isArray(data) || data.length === 0) {
         servicioSel.innerHTML = '<option value="">No hay servicios disponibles para esta categoría</option>';
         servicioSel.disabled = true;
+        console.warn('No se encontraron servicios');
         return;
       }
       
@@ -360,10 +410,121 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       servicioSel.disabled = false;
+      console.log('Servicios cargados exitosamente');
     } catch (e) {
-      console.error('Error:', e);
+      console.error('Error al cargar servicios:', e);
       servicioSel.innerHTML = '<option value="">Error al cargar servicios</option>';
       servicioSel.disabled = true;
+    }
+  }
+
+  /**
+   * Cargar horas disponibles para una fecha
+   */
+  async function loadAvailableTimes(selectedDate) {
+    if (!selectedDate) {
+      hora.innerHTML = '<option value="">-- Selecciona fecha primero --</option>';
+      hora.disabled = true;
+      return;
+    }
+
+    if (!profesionalSel.value || !servicioSel.value) {
+      hora.innerHTML = '<option value="">-- Selecciona profesional y servicio primero --</option>';
+      hora.disabled = true;
+      return;
+    }
+
+    hora.innerHTML = '<option value="">⏳ Cargando horarios disponibles...</option>';
+    hora.disabled = true;
+
+    try {
+      // Primero obtener los horarios de trabajo del profesional para este día
+      const scheduleRes = await fetch('{{ route('agendar.schedule') }}?' + new URLSearchParams({
+        profesional_id: profesionalSel.value,
+        fecha: selectedDate
+      }).toString());
+
+      if (!scheduleRes.ok) {
+        throw new Error('Error al cargar horarios del profesional');
+      }
+
+      const scheduleData = await scheduleRes.json();
+      const horarios = scheduleData.horarios || [];
+
+      if (horarios.length === 0) {
+        hora.innerHTML = '<option value="">El profesional no tiene horario definido para este día</option>';
+        hora.disabled = true;
+        console.warn('Sin horarios definidos para el profesional');
+        return;
+      }
+
+      // Generar opciones de tiempo basadas en los horarios disponibles
+      const availableTimes = [];
+      
+      // Para cada bloque de horario disponible
+      for (const horario of horarios) {
+        const [startHour, startMin] = horario.hora_inicio.split(':').map(Number);
+        const [endHour, endMin] = horario.hora_fin.split(':').map(Number);
+        
+        // Generar opciones dentro de este bloque
+        const blockOptions = generateTimeOptions(startHour, endHour + 1);
+        
+        // Filtrar para que no salga del horario final
+        for (const timeOpt of blockOptions) {
+          const [timeHour, timeMin] = timeOpt.value.split(':').map(Number);
+          
+          // No permitir horas después del hora_fin
+          if (timeHour > endHour || (timeHour === endHour && timeMin >= endMin)) {
+            continue;
+          }
+          
+          // Verificar si ya existe en availableTimes
+          if (!availableTimes.find(t => t.value === timeOpt.value)) {
+            availableTimes.push(timeOpt);
+          }
+        }
+      }
+
+      // Ahora verificar disponibilidad para cada hora (conflictos con citas existentes)
+      const validTimes = [];
+
+      for (const timeOpt of availableTimes) {
+        const res = await fetch('{{ route('agendar.check') }}?' + new URLSearchParams({
+          profesional_id: profesionalSel.value,
+          fecha: selectedDate,
+          hora: timeOpt.value,
+          servicio_id: servicioSel.value
+        }).toString());
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json.available) {
+            validTimes.push(timeOpt);
+          }
+        }
+      }
+
+      if (validTimes.length === 0) {
+        hora.innerHTML = '<option value="">No hay horarios disponibles para esta fecha</option>';
+        hora.disabled = true;
+        console.warn('No hay horarios disponibles');
+        return;
+      }
+
+      hora.innerHTML = '<option value="">-- Selecciona un horario --</option>';
+      validTimes.forEach(timeOpt => {
+        const opt = document.createElement('option');
+        opt.value = timeOpt.value;
+        opt.textContent = timeOpt.label;
+        hora.appendChild(opt);
+      });
+
+      hora.disabled = false;
+      console.log('Horarios disponibles cargados:', validTimes.length);
+    } catch (e) {
+      console.error('Error al cargar horarios disponibles:', e);
+      hora.innerHTML = '<option value="">Error al cargar horarios disponibles</option>';
+      hora.disabled = true;
     }
   }
 
@@ -371,17 +532,57 @@ document.addEventListener('DOMContentLoaded', function() {
    * Cambio de categoría
    */
   categoria && categoria.addEventListener('change', function() {
+    console.log('=== CAMBIO DE CATEGORÍA ===');
+    console.log('Valor de categoría:', this.value);
+    console.log('Tipo:', typeof this.value);
+    
     if (this.value) {
+      console.log('Llamando loadServices con ID:', this.value);
       loadServices(this.value);
       servicioSel.value = '';
+      hora.value = '';
       submitBtn.disabled = true;
       updateButtonState();
     } else {
+      console.log('Categoría vacía, limpiando servicios');
       servicioSel.innerHTML = '<option value="">-- Selecciona categoría primero --</option>';
       servicioSel.disabled = true;
+      hora.innerHTML = '<option value="">-- Selecciona fecha primero --</option>';
+      hora.disabled = true;
       submitBtn.disabled = true;
       updateButtonState();
     }
+  });
+
+  /**
+   * Cambio de fecha
+   */
+  fecha && fecha.addEventListener('change', function() {
+    if (this.value) {
+      loadAvailableTimes(this.value);
+      hora.value = '';
+      submitBtn.disabled = true;
+      updateButtonState();
+    } else {
+      hora.innerHTML = '<option value="">-- Selecciona fecha primero --</option>';
+      hora.disabled = true;
+      submitBtn.disabled = true;
+      updateButtonState();
+    }
+  });
+
+  /**
+   * Cambio de servicio o profesional
+   */
+  [servicioSel, profesionalSel].forEach(el => {
+    el && el.addEventListener('change', function() {
+      if (fecha.value) {
+        loadAvailableTimes(fecha.value);
+        hora.value = '';
+      }
+      submitBtn.disabled = true;
+      updateButtonState();
+    });
   });
 
   /**
@@ -401,13 +602,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     try {
-      const res = await fetch('{{ route('agendar.check') }}?' + params.toString());
-      if (!res.ok) throw new Error('Error checking availability');
+      const url = '{{ route('agendar.check') }}?' + params.toString();
+      console.log('Verificando disponibilidad:', url);
+      
+      const res = await fetch(url);
+      console.log('Response status:', res.status);
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Error checking availability:', res.status, errorText);
+        throw new Error('Error checking availability (HTTP ' + res.status + ')');
+      }
       
       const json = await res.json();
+      console.log('Availability response:', json);
       return json.available === true;
     } catch (e) {
-      console.error('Error:', e);
+      console.error('Error en checkAvailability:', e);
       return false;
     }
   }
@@ -485,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * Escuchar cambios en campos
    */
-  const fieldsToWatch = [profesionalSel, fecha, hora, servicioSel];
+  const fieldsToWatch = [profesionalSel, hora, servicioSel];
   fieldsToWatch.forEach(el => {
     el && el.addEventListener('change', updateButtonState);
   });

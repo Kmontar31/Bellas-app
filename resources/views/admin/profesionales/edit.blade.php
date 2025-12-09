@@ -4,14 +4,15 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-warning text-dark">
                     <h5 class="mb-0">
-                        <i class="fas fa-user-tie"></i> Nuevo Profesional
+                        <i class="fas fa-edit"></i> Editar Profesional
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.profesionales.store') }}" method="POST">
+                    <form action="{{ route('admin.profesionales.update', $profesional->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         
                         <div class="mb-3">
                             <label for="nombre" class="form-label">
@@ -22,7 +23,7 @@
                                 id="nombre" 
                                 name="nombre" 
                                 class="form-control @error('nombre') is-invalid @enderror" 
-                                value="{{ old('nombre') }}"
+                                value="{{ old('nombre', $profesional->nombre) }}"
                                 placeholder="María García"
                                 required
                             >
@@ -40,7 +41,7 @@
                                 id="email" 
                                 name="email" 
                                 class="form-control @error('email') is-invalid @enderror" 
-                                value="{{ old('email') }}"
+                                value="{{ old('email', $profesional->email) }}"
                                 placeholder="maria@example.com"
                                 required
                             >
@@ -58,7 +59,7 @@
                                 id="telefono" 
                                 name="telefono" 
                                 class="form-control @error('telefono') is-invalid @enderror" 
-                                value="{{ old('telefono') }}"
+                                value="{{ old('telefono', $profesional->telefono) }}"
                                 placeholder="+34 123 456 789"
                                 required
                             >
@@ -76,7 +77,7 @@
                                 id="especialidad" 
                                 name="especialidad" 
                                 class="form-control @error('especialidad') is-invalid @enderror" 
-                                value="{{ old('especialidad') }}"
+                                value="{{ old('especialidad', $profesional->especialidad) }}"
                                 placeholder="Ej: Esteticien, Masajista, etc"
                                 required
                             >
@@ -86,8 +87,8 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Profesional
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Actualizar Profesional
                             </button>
                             <a href="{{ route('admin.profesionales.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Volver
