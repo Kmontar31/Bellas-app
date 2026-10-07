@@ -1,0 +1,20 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class CategoriaSeeder extends Seeder
+{
+
+public function run(): void
+{
+    $this->call([
+        // Llama a tu seeder
+        CategoriaSeeder::class,
+        // ... otros seeders que tengas
+    ]);
+}
+DB::table('clientes')->insert($clientes);
+    }
